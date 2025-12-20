@@ -1,35 +1,39 @@
 plugins {
-    id 'java'
-    id 'jacoco'
+	id 'java'
+	id 'jacoco'
+    id 'application'
 }
 
-group = 'com.example'
+group = 'com.geektrust'
 version = '1.0'
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-jacoco {
+jacoco { //Please do not change this
     toolVersion = "0.8.4"
+    reportsDir = file("$buildDir/jacoco")
 }
 
-jacocoTestReport {
+jacocoTestReport { //Please do not change this
     reports {
-        xml.required = true
-        csv.required = false
-        html.required = false
-        xml.outputLocation = file("./jacoco.xml")
+        xml.enabled true
+        csv.enabled false
+        html.enabled false
+        xml.destination file("./jacoco.xml")
     }
+}
+
+application {
+    mainClassName = 'com.example.geektrust.Main'
 }
 
 jar {
-    archiveBaseName = 'geektrust'
-    version = null
-
+    archiveBaseName = 'geektrust' //Please do not change this final artifact name
+    version =  null               //Please do not change this final artifact version
     manifest {
-        attributes 'Main-Class': 'com.example.geektrust.Main'
+        attributes 'Main-Class' : 'com.example.geektrust.Main' //Change this to the main class of your program which will be executed
     }
-
+    // To create a single jar with all dependencies.
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     } {
@@ -39,28 +43,27 @@ jar {
     }
 }
 
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        events "PASSED", "SKIPPED", "FAILED", "STANDARD_ERROR"
-    }
-
-    finalizedBy jacocoTestReport
-
-    afterSuite { desc, result ->
-        if (!desc.parent)
-            println("${result.resultType} (${result.testCount} tests, " +
-                    "${result.successfulTestCount} successes, " +
-                    "${result.failedTestCount} failures, " +
-                    "${result.skippedTestCount} skipped)")
-    }
-}
-
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version:'5.2.0'
+	testCompile 'org.mockito:mockito-junit-jupiter:3.11.1'
+	testCompile 'org.junit.jupiter:junit-jupiter:5.7.2'
+}
+
+test { ///Please do not change this
+    useJUnitPlatform()
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_ERROR"
+    }
+    finalizedBy jacocoTestReport // report is always generated after tests run
+    afterSuite { desc, result ->
+        if (!desc.parent)
+            println("${result.resultType} " +
+                "(${result.testCount} tests, " +
+                "${result.successfulTestCount} successes, " +
+                "${result.failedTestCount} failures, " +
+                "${result.skippedTestCount} skipped)")
+        }
 }

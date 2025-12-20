@@ -27,15 +27,13 @@ public class MetroCardService {
         return card.getBalance() >= fare;
     }
 
-    public int autoRecharge(MetroCard card, int requireAmount){
-        int rechargeAmount = requireAmount;
-        int serviceFee = (int) Math.ceil(rechargeAmount * 0.02);
+   public int autoRecharge(MetroCard card, int requiredAmount) {
 
-        int total = rechargeAmount * serviceFee;
-        card.addBalance(total);
+    int serviceFee = (int) Math.ceil(requiredAmount * 0.02);
+    card.addBalance(requiredAmount + serviceFee);
 
-        return serviceFee;
-    }
+    return serviceFee;
+}
 
     public void deductFee(MetroCard card, int amount){
         card.deductBalance(amount);
